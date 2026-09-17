@@ -1,0 +1,82 @@
+[
+  {
+    "ticket_id": "tkt_801",
+    "user_id": "usr_marcus_02",
+    "order_id": "ord_9012",
+    "text": "The delivery bag was completely soaked and torn, and my soup was barely lukewarm when it arrived 20 minutes late.",
+    "category": "Food Temperature & Packaging",
+    "cluster_id": "cluster_thermal_packaging",
+    "sentiment_score": -0.85,
+    "created_at": "2025-05-13T13:00:00Z"
+  },
+  {
+    "ticket_id": "tkt_802",
+    "user_id": "usr_sarah_01",
+    "order_id": "ord_9011",
+    "text": "Ramen broth was cold and spilled all over the bottom of the paper bag. Driver clearly tipped the bag sideways on the bike.",
+    "category": "Food Temperature & Packaging",
+    "cluster_id": "cluster_thermal_packaging",
+    "sentiment_score": -0.92,
+    "created_at": "2025-05-12T20:10:00Z"
+  },
+  {
+    "ticket_id": "tkt_803",
+    "user_id": "usr_elena_03",
+    "order_id": "ord_9008",
+    "text": "I specifically selected strict Dairy-Free on my profile, but the salad had shredded parmesan cheese sprinkled across the top!",
+    "category": "Dietary & Allergen Violation",
+    "cluster_id": "cluster_dietary_mismatch",
+    "sentiment_score": -0.95,
+    "created_at": "2025-05-10T19:45:00Z"
+  },
+  {
+    "ticket_id": "tkt_804",
+    "user_id": "usr_marcus_02",
+    "order_id": "ord_9005",
+    "text": "Received a wrap containing walnuts when my account explicitly flags a severe tree nut allergy. This is dangerous.",
+    "category": "Dietary & Allergen Violation",
+    "cluster_id": "cluster_dietary_mismatch",
+    "sentiment_score": -0.99,
+    "created_at": "2025-05-08T14:20:00Z"
+  },
+  {
+    "ticket_id": "tkt_805",
+    "user_id": "usr_guest_09",
+    "order_id": "ord_9003",
+    "text": "The courier drove in circles around the block for 15 minutes instead of pulling into the driveway as instructed in delivery notes.",
+    "category": "Courier Navigation & Route",
+    "cluster_id": "cluster_courier_navigation",
+    "sentiment_score": -0.70,
+    "created_at": "2025-05-07T21:15:00Z"
+  },
+  {
+    "ticket_id": "tkt_806",
+    "user_id": "usr_guest_11",
+    "order_id": "ord_9001",
+    "text": "GPS marker in the app showed the driver stationary 3 miles away for 25 minutes while my food was already marked out for delivery.",
+    "category": "Courier Navigation & Route",
+    "cluster_id": "cluster_courier_navigation",
+    "sentiment_score": -0.78,
+    "created_at": "2025-05-06T18:30:00Z"
+  },
+  {
+    "ticket_id": "tkt_807",
+    "user_id": "usr_sarah_01",
+    "order_id": "ord_8995",
+    "text": "Both dipping sauces and extra cutlery were missing from my bowl order despite paying extra for premium vinaigrette.",
+    "category": "Missing Items & Condiments",
+    "cluster_id": "cluster_missing_items",
+    "sentiment_score": -0.65,
+    "created_at": "2025-05-05T12:50:00Z"
+  },
+  {
+    "ticket_id": "tkt_808",
+    "user_id": "usr_elena_03",
+    "order_id": "ord_8992",
+    "text": "Forgot the side of avocado and dressing that was included in the combo.",
+    "category": "Missing Items & Condiments",
+    "cluster_id": "cluster_missing_items",
+    "sentiment_score": -0.58,
+    "created_at": "2025-05-04T13:10:00Z"
+  }
+]

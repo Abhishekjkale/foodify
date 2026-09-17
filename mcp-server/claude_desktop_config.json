@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "foodify": {
+      "command": "node",
+      "args": ["-r", "tsx/register", "./mcp-server/src/transports/stdio.ts"],
+      "env": {
+        "NODE_ENV": "development",
+        "DATABASE_URL": "postgresql://foodify:postgres@localhost:5432/foodify_db"
+      }
+    }
+  }
+}

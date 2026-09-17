@@ -1,0 +1,151 @@
+// Prisma Schema for Foodify Platform
+// Database: PostgreSQL with pgvector extension for semantic dish retrieval
+
+datasource db {
+  provider   = "postgresql"
+  url        = env("DATABASE_URL")
+  extensions = [pgvector(map: "vector")]
+}
+
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["postgresqlExtensions"]
+}
+
+enum Role {
+  CUSTOMER
+  RESTAURANT_OWNER
+  ADMIN
+  AI_AGENT
+}
+
+enum OrderStatus {
+  PENDING
+  CONFIRMED
+  PREPARING
+  OUT_FOR_DELIVERY
+  DELIVERED
+  CANCELLED
+}
+
+model User {
+  id                 String         @id @default(uuid())
+  email              String         @unique
+  name               String
+  role               Role           @default(CUSTOMER)
+  dietaryPreferences String[]       // e.g. ["vegan", "gluten-free"]
+  allergens          String[]       // e.g. ["peanuts", "dairy"]
+  defaultZipCode     String
+  orders             Order[]
+  supportTickets     SupportTicket[]
+  createdAt          DateTime       @default(now())
+  updatedAt          DateTime       @updatedAt
+
+  @@index([email])
+}
+
+model Restaurant {
+  id                 String       @id @default(uuid())
+  name               String
+  description        String?
+  cuisine            String[]
+  rating             Decimal      @default(5.0) @db.Decimal(2, 1)
+  reviewCount        Int          @default(0)
+  deliveryFee        Decimal      @db.Decimal(10, 2)
+  minDeliveryMinutes Int          @default(20)
+  maxDeliveryMinutes Int          @default(45)
+  servicedZipCodes   String[]
+  address            String
+  isOpen             Boolean      @default(true)
+  bannerImage        String?
+  menuItems          MenuItem[]
+  orders             Order[]
+  createdAt          DateTime     @default(now())
+  updatedAt          DateTime     @updatedAt
+
+  @@index([isOpen])
+}
+
+model MenuItem {
+  id              String           @id @default(uuid())
+  restaurantId    String
+  restaurant      Restaurant       @relation(fields: [restaurantId], references: [id], onDelete: Cascade)
+  name            String
+  description     String
+  price           Decimal          @db.Decimal(10, 2)
+  category        String
+  dietaryTags     String[]
+  allergens       String[]
+  calories        Int
+  proteinGrams    Int
+  isAvailable     Boolean          @default(true)
+  imageUrl        String?
+  prepTimeMinutes Int              @default(15)
+  embeddingChunk  EmbeddingChunk?
+  orderItems      OrderItem[]
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+
+  @@index([restaurantId])
+  @@index([category])
+}
+
+model Order {
+  id                  String       @id @default(uuid())
+  userId              String
+  user                User         @relation(fields: [userId], references: [id])
+  restaurantId        String
+  restaurant          Restaurant   @relation(fields: [restaurantId], references: [id])
+  status              OrderStatus  @default(PENDING)
+  subtotal            Decimal      @db.Decimal(10, 2)
+  tax                 Decimal      @db.Decimal(10, 2)
+  deliveryFee         Decimal      @db.Decimal(10, 2)
+  total               Decimal      @db.Decimal(10, 2)
+  deliveryAddress     Json
+  placedAt            DateTime     @default(now())
+  estimatedDeliveryAt DateTime
+  deliveredAt         DateTime?
+  orderItems          OrderItem[]
+  trackingStage       Int          @default(1)
+  createdAt           DateTime     @default(now())
+  updatedAt           DateTime     @updatedAt
+
+  @@index([userId])
+  @@index([restaurantId])
+  @@index([status])
+}
+
+model OrderItem {
+  id                  String   @id @default(uuid())
+  orderId             String
+  order               Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  menuItemId          String
+  menuItem            MenuItem @relation(fields: [menuItemId], references: [id])
+  quantity            Int
+  unitPrice           Decimal  @db.Decimal(10, 2)
+  subtotal            Decimal  @db.Decimal(10, 2)
+  specialInstructions String?
+}
+
+model EmbeddingChunk {
+  id         String                 @id @default(uuid())
+  menuItemId String                 @unique
+  menuItem   MenuItem               @relation(fields: [menuItemId], references: [id], onDelete: Cascade)
+  chunkText  String                 @db.Text
+  vector     Unsupported("vector")? // 768 or 1536-dimensional embedding
+  metadata   Json
+  createdAt  DateTime               @default(now())
+}
+
+model SupportTicket {
+  id              String    @id @default(uuid())
+  userId          String
+  user            User      @relation(fields: [userId], references: [id])
+  category        String    // e.g. "Cold Food", "Late Delivery", "Missing Items"
+  text            String    @db.Text
+  sentimentScore  Float     // -1.0 to 1.0
+  semanticCluster String?
+  createdAt       DateTime  @default(now())
+
+  @@index([semanticCluster])
+}

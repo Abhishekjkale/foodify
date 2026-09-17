@@ -1,0 +1,6 @@
+{
+  "name": "Foodify - Enterprise AI Food Delivery Platform",
+  "description": "Enterprise-grade food delivery architecture with Model Context Protocol (MCP) server, RAG personalization engine, and AI Product Manager analytics dashboard.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

@@ -1,0 +1,18 @@
+{
+  "name": "foodify-mcp-server",
+  "version": "1.0.0",
+  "description": "Model Context Protocol (MCP) Server for Foodify Enterprise Platform",
+  "main": "dist/server.js",
+  "scripts": {
+    "start": "tsx src/transports/stdio.ts",
+    "build": "tsc"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^0.6.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "tsx": "^4.19.0",
+    "typescript": "^5.5.0"
+  }
+}

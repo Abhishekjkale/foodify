@@ -1,0 +1,88 @@
+version: '3.8'
+
+services:
+  # Relational DB with pgvector extension for dense embedding storage
+  postgres:
+    image: pgvector/pgvector:pg16
+    container_name: foodify_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: foodify
+      POSTGRES_PASSWORD: foodify_secure_password
+      POSTGRES_DB: foodify_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./backend/prisma/init.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U foodify -d foodify_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # In-memory cache for session state and fast semantic query caching
+  redis:
+    image: redis:7-alpine
+    container_name: foodify_redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+
+  # Node.js Full-Stack Backend & API Gateway
+  foodify-backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: foodify_backend
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+      DATABASE_URL: postgresql://foodify:foodify_secure_password@postgres:5432/foodify_db
+      REDIS_URL: redis://redis:6379
+      GEMINI_API_KEY: ${GEMINI_API_KEY}
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_started
+
+  # Model Context Protocol (MCP) Stdio / SSE Server
+  mcp-server:
+    build:
+      context: ./mcp-server
+      dockerfile: Dockerfile
+    container_name: foodify_mcp
+    restart: unless-stopped
+    ports:
+      - "3001:3001"
+    environment:
+      NODE_ENV: production
+      PORT: 3001
+      DATABASE_URL: postgresql://foodify:foodify_secure_password@postgres:5432/foodify_db
+    depends_on:
+      - postgres
+
+  # Dedicated Python Microservice for LangChain / LlamaIndex Vector Ingestion & Clustering
+  rag-service:
+    build:
+      context: ./rag-pipeline
+      dockerfile: Dockerfile
+    container_name: foodify_rag
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    environment:
+      DATABASE_URL: postgresql://foodify:foodify_secure_password@postgres:5432/foodify_db
+      GEMINI_API_KEY: ${GEMINI_API_KEY}
+    depends_on:
+      - postgres
+
+volumes:
+  postgres_data:
+  redis_data:
